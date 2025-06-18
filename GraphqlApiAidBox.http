@@ -1,0 +1,94 @@
+@GraphqlApiAidBox_HostAddress = http://localhost:5225
+
+GET {{GraphqlApiAidBox_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+# Retrieve a patient by name Zach Brown
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { PatientList(given: \"Zach\", family: \"Brown\") { id name { family given } gender birthDate } }",
+  "variables": {}
+}
+
+###
+# Retrieve consents for a patient by given and family name
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(patient: { given: \"Zach\", family: \"Brown\" }) { id status patient { id } category { coding { code display } } } }",
+  "variables": {}
+}
+
+###
+# 1. Get all patients with the name "Zach Brown"
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { PatientList(given: \"Zach\", family: \"Brown\") { id name { family given } } }",
+  "variables": {}
+}
+
+###
+# 2. For each patient id from above, get their consents (replace <PATIENT_ID> with each id)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(patient: { id: \"<PATIENT_ID>\" }) { id status patient { id } category { coding { code display } } } }",
+  "variables": {}
+}
+
+###
+# Get all patients with given and family name using variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query ($given: string, $family: string) { PatientList(given: $given, family: $family) { id name { family given } } }",
+  "variables": { "given": "Zach", "family": "Brown" }
+}
+
+###
+# Get all patients with given and family name using variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { PatientList(given: \"{{given}}\", family: \"{{family}}\") { id name { family given } } }",
+  "variables": { "given": "Zach", "family": "Brown" }
+}
+
+###
+# 1. Get all patients with given and family name using variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { PatientList(given: \"{{given}}\", family: \"{{family}}\") { id name { family given } } }",
+  "variables": { "given": "Zach", "family": "Brown" }
+}
+
+###
+# 2. For each patient id from above, get their consents (replace {{patientId}} with each id)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(patient: { id: \"{{patientId}}\" }) { id status patient { id } category { coding { code display } } } }",
+  "variables": { "patientId": "<PATIENT_ID_FROM_STEP_1>" }
+}
+
+###
