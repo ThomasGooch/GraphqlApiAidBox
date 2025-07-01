@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4d97e4da-8dc9-4cd3-8f0c-0786f0a54938" name="@CMMC02FT35LMD6P 2025-07-01 17:11:47" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-07-01T17:11:47.8110120-04:00" queuing="2025-07-01T17:11:47.8110120-04:00" start="2025-07-01T17:11:46.3145090-04:00" finish="2025-07-01T17:11:47.8189410-04:00" />
+  <TestSettings name="default" id="1ebea376-d6cf-4550-9741-ee71d49f70d2">
+    <Deployment runDeploymentRoot="_CMMC02FT35LMD6P_2025-07-01_17_11_47" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="bbe8d2cf-fd12-42ae-9e0e-5ccc54767e22" testId="f80fbe42-fcd6-0753-ecfc-f61f8457330d" testName="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_ConsentHistory_When_Provenance_With_Id" computerName="CMMC02FT35LMD6P" duration="00:00:00.0029658" startTime="2025-07-01T17:11:47.6398210-04:00" endTime="2025-07-01T17:11:47.6398210-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bbe8d2cf-fd12-42ae-9e0e-5ccc54767e22" />
+    <UnitTestResult executionId="af78ebc6-6ef4-4717-98c2-b6538f681b37" testId="8b10dfdd-5946-9cc0-590a-7704b0f1556a" testName="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_DocumentReferenceUrl_When_DocumentReference_With_Subject_And_Related" computerName="CMMC02FT35LMD6P" duration="00:00:00.0034022" startTime="2025-07-01T17:11:47.6461540-04:00" endTime="2025-07-01T17:11:47.6461550-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af78ebc6-6ef4-4717-98c2-b6538f681b37" />
+    <UnitTestResult executionId="c278960a-78b5-449a-9c1a-a0b41e52a2d2" testId="ac8c0d3d-d62a-739f-f73c-c82e1c9d1ac9" testName="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_NotFound_When_QueryFile_Missing" computerName="CMMC02FT35LMD6P" duration="00:00:00.0047364" startTime="2025-07-01T17:11:47.6367650-04:00" endTime="2025-07-01T17:11:47.6367650-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c278960a-78b5-449a-9c1a-a0b41e52a2d2" />
+    <UnitTestResult executionId="cf58c621-c69e-43ee-ba83-ee8278a44f76" testId="22090138-40bf-b098-5ea6-25157ea6e43b" testName="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_AllConsents_When_No_Variables" computerName="CMMC02FT35LMD6P" duration="00:00:00.1814272" startTime="2025-07-01T17:11:47.6299860-04:00" endTime="2025-07-01T17:11:47.6300330-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf58c621-c69e-43ee-ba83-ee8278a44f76" />
+    <UnitTestResult executionId="b6185b07-3b74-480d-92f7-7750861fd020" testId="3494fedc-b548-795d-4de6-b39ed8e9c2f8" testName="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_ConsentDetails_When_Consent_With_Id" computerName="CMMC02FT35LMD6P" duration="00:00:00.0025442" startTime="2025-07-01T17:11:47.6426250-04:00" endTime="2025-07-01T17:11:47.6426260-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b6185b07-3b74-480d-92f7-7750861fd020" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_NotFound_When_QueryFile_Missing" storage="/users/thomas.gooch/projects/poc/graphqlapiaidbox/tests/bin/debug/net9.0/graphqlapiaidbox.tests.dll" id="ac8c0d3d-d62a-739f-f73c-c82e1c9d1ac9">
+      <Execution id="c278960a-78b5-449a-9c1a-a0b41e52a2d2" />
+      <TestMethod codeBase="/Users/thomas.gooch/Projects/POC/GraphqlApiAidBox/Tests/bin/Debug/net9.0/GraphqlApiAidBox.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GraphqlApiAidBox.Tests.PassthroughControllerTests" name="Returns_NotFound_When_QueryFile_Missing" />
+    </UnitTest>
+    <UnitTest name="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_ConsentHistory_When_Provenance_With_Id" storage="/users/thomas.gooch/projects/poc/graphqlapiaidbox/tests/bin/debug/net9.0/graphqlapiaidbox.tests.dll" id="f80fbe42-fcd6-0753-ecfc-f61f8457330d">
+      <Execution id="bbe8d2cf-fd12-42ae-9e0e-5ccc54767e22" />
+      <TestMethod codeBase="/Users/thomas.gooch/Projects/POC/GraphqlApiAidBox/Tests/bin/Debug/net9.0/GraphqlApiAidBox.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GraphqlApiAidBox.Tests.PassthroughControllerTests" name="Returns_ConsentHistory_When_Provenance_With_Id" />
+    </UnitTest>
+    <UnitTest name="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_DocumentReferenceUrl_When_DocumentReference_With_Subject_And_Related" storage="/users/thomas.gooch/projects/poc/graphqlapiaidbox/tests/bin/debug/net9.0/graphqlapiaidbox.tests.dll" id="8b10dfdd-5946-9cc0-590a-7704b0f1556a">
+      <Execution id="af78ebc6-6ef4-4717-98c2-b6538f681b37" />
+      <TestMethod codeBase="/Users/thomas.gooch/Projects/POC/GraphqlApiAidBox/Tests/bin/Debug/net9.0/GraphqlApiAidBox.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GraphqlApiAidBox.Tests.PassthroughControllerTests" name="Returns_DocumentReferenceUrl_When_DocumentReference_With_Subject_And_Related" />
+    </UnitTest>
+    <UnitTest name="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_AllConsents_When_No_Variables" storage="/users/thomas.gooch/projects/poc/graphqlapiaidbox/tests/bin/debug/net9.0/graphqlapiaidbox.tests.dll" id="22090138-40bf-b098-5ea6-25157ea6e43b">
+      <Execution id="cf58c621-c69e-43ee-ba83-ee8278a44f76" />
+      <TestMethod codeBase="/Users/thomas.gooch/Projects/POC/GraphqlApiAidBox/Tests/bin/Debug/net9.0/GraphqlApiAidBox.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GraphqlApiAidBox.Tests.PassthroughControllerTests" name="Returns_AllConsents_When_No_Variables" />
+    </UnitTest>
+    <UnitTest name="GraphqlApiAidBox.Tests.PassthroughControllerTests.Returns_ConsentDetails_When_Consent_With_Id" storage="/users/thomas.gooch/projects/poc/graphqlapiaidbox/tests/bin/debug/net9.0/graphqlapiaidbox.tests.dll" id="3494fedc-b548-795d-4de6-b39ed8e9c2f8">
+      <Execution id="b6185b07-3b74-480d-92f7-7750861fd020" />
+      <TestMethod codeBase="/Users/thomas.gooch/Projects/POC/GraphqlApiAidBox/Tests/bin/Debug/net9.0/GraphqlApiAidBox.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GraphqlApiAidBox.Tests.PassthroughControllerTests" name="Returns_ConsentDetails_When_Consent_With_Id" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f80fbe42-fcd6-0753-ecfc-f61f8457330d" executionId="bbe8d2cf-fd12-42ae-9e0e-5ccc54767e22" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b10dfdd-5946-9cc0-590a-7704b0f1556a" executionId="af78ebc6-6ef4-4717-98c2-b6538f681b37" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ac8c0d3d-d62a-739f-f73c-c82e1c9d1ac9" executionId="c278960a-78b5-449a-9c1a-a0b41e52a2d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22090138-40bf-b098-5ea6-25157ea6e43b" executionId="cf58c621-c69e-43ee-ba83-ee8278a44f76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3494fedc-b548-795d-4de6-b39ed8e9c2f8" executionId="b6185b07-3b74-480d-92f7-7750861fd020" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.7+8f2703126a (64-bit .NET 9.0.0)
+[xUnit.net 00:00:00.11]   Discovering: GraphqlApiAidBox.Tests
+[xUnit.net 00:00:00.16]   Discovered:  GraphqlApiAidBox.Tests
+[xUnit.net 00:00:00.16]   Starting:    GraphqlApiAidBox.Tests
+[xUnit.net 00:00:00.44]   Finished:    GraphqlApiAidBox.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,3 @@
+{
+    "GET_DOCUMENT_REFERENCE_URL_QUERY": "query GetDocumentReferenceUrl($subject: string, $related: string) { DocumentReferenceList(subject: \"{patientid}\", related: \"{consentid}\") { content { attachment { url } } } }"
+ } 

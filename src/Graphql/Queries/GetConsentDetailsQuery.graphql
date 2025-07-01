@@ -1,0 +1,3 @@
+{ 
+    "GET_CONSENTS_DETAIL_QUERY": "query GetConsentDetails { ConsentList(_id: \"{id}\") { id status category { coding { system code display } } patient { resource { ... on Patient { name { given family } birthDate id } } } dateTime performer { resource { ... on Practitioner { id name { given family } address { line city state postalCode country } identifier { system value } } } } organization { resource { ... on Organization { id name } } } policy { authority uri } provision { type actor { role { coding { system code display } } } period { start end } action { coding { system code display } } } } }" 
+}

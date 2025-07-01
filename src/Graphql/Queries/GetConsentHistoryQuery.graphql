@@ -1,0 +1,3 @@
+{
+    "GET_CONSENT_HISTORY_QUERY": "query { ProvenanceList(target: \"{id}\") { id recorded meta { lastUpdated } activity { coding { display } } } }"
+ }

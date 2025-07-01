@@ -1,24 +1,28 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.5.2.0
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphqlApiAidBox", "GraphqlApiAidBox.csproj", "{DE02F45C-6174-E11B-66A5-45EA2FCE7A0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphqlApiAidBox", "src/GraphqlApiAidBox.csproj", "{D37C4C3A-297E-4397-BA8D-CC759063A5F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphqlApiAidBox.Tests", "Tests\GraphqlApiAidBox.Tests.csproj", "{A5CC5B6D-2C43-47D9-9CAF-E6D27DD3AAB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DE02F45C-6174-E11B-66A5-45EA2FCE7A0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE02F45C-6174-E11B-66A5-45EA2FCE7A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE02F45C-6174-E11B-66A5-45EA2FCE7A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE02F45C-6174-E11B-66A5-45EA2FCE7A0D}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {5C4655F3-1B82-41A6-B9D7-256EB3A78CD2}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D37C4C3A-297E-4397-BA8D-CC759063A5F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D37C4C3A-297E-4397-BA8D-CC759063A5F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D37C4C3A-297E-4397-BA8D-CC759063A5F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D37C4C3A-297E-4397-BA8D-CC759063A5F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5CC5B6D-2C43-47D9-9CAF-E6D27DD3AAB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5CC5B6D-2C43-47D9-9CAF-E6D27DD3AAB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5CC5B6D-2C43-47D9-9CAF-E6D27DD3AAB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5CC5B6D-2C43-47D9-9CAF-E6D27DD3AAB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
