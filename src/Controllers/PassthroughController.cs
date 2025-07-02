@@ -95,6 +95,26 @@ namespace GraphqlApiAidBox.Controllers
             return Content(responseContent, "application/json");
         }
 
+        private static bool IsValidHistoryRequest(JsonObject variables)
+        {
+            // Validate ID exists and is meaningful for history queries
+            if (!HasVariable(variables, "id"))
+                return false;
+            
+            var idValue = GetVariableValue(variables, "id");
+            if (string.IsNullOrWhiteSpace(idValue) || idValue.Length < 2)
+                return false;
+            
+            return true;
+        }
+
+        private static string? GetVariableValue(JsonObject variables, string key)
+        {
+            return variables.FirstOrDefault(kvp => 
+                string.Equals(kvp.Key, key, StringComparison.OrdinalIgnoreCase))
+                .Value?.ToString();
+        }
+
         private static bool HasVariable(JsonObject variables, string key)
         {
             return variables.Any(kvp => string.Equals(kvp.Key, key, StringComparison.OrdinalIgnoreCase) && 
