@@ -1,3 +1,0 @@
-{
-  "GET_ALL_CONSENTS_QUERY": "query GetAllConsents { ConsentList { id status scope { id } category { coding { system code display } } patient { resource { ... on Patient { name { given family } birthDate } } } dateTime performer { resource { ... on Practitioner { name { given family } } } } organization { resource { ... on Organization { name } } } policy { authority uri } provision { type actor { role { coding { system code display } } reference { id } } action { coding { system code display } } period { start end } } meta { lastUpdated extension { url valueInstant } } } }"
-}
