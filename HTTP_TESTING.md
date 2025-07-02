@@ -41,7 +41,7 @@ These tests verify that the API correctly selects GraphQL query files based on t
 
 - `consent` + `id` → `GetConsentDetailsQuery.graphql`
 - `documentreference` + `subject` + `related` → `GetDocumentReferenceUrlQuery.graphql`
-- `provenance` + `id` → `GetConsentHistoryQuery.graphql`
+- `provenance` + `id` → `GetConsentHistoryQuery.graphql` (comprehensive audit trail)
 - No match → `GetAllConsentsQuery.graphql` (default)
 
 #### Direct Query Tests
@@ -159,3 +159,29 @@ curl -X POST http://localhost:5225/passthrough \
   -H "Content-Type: application/json" \
   -d '{"Resource": "consent", "variables": {"id": "test-123"}}'
 ```
+
+### Enhanced Provenance History Query
+
+The `GetConsentHistoryQuery.graphql` provides comprehensive audit trail information:
+
+#### Comprehensive Field Selection
+- **Core Information**: ID, timestamps, metadata
+- **Activity Details**: Action types, coding systems
+- **Agent Information**: Who made changes (practitioners, organizations, patients)
+- **Entity Details**: What was changed (consent resources)
+- **Reason Codes**: Why changes were made
+- **Authorization**: Legal basis and permissions
+- **Digital Signatures**: Verification and attestation
+- **Location**: Where changes occurred
+- **Policy References**: Applicable policies and procedures
+- **Timing**: Occurrence periods and specific timestamps
+
+#### Example Usage
+```json
+{
+  "Resource": "provenance",
+  "variables": { "id": "consent-123" }
+}
+```
+
+This returns a comprehensive audit trail showing all changes made to the specified consent resource.

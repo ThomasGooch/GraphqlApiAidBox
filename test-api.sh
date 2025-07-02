@@ -79,6 +79,14 @@ test_request "DocumentReference Query" \
 test_request "Provenance Query" \
     '{"Resource": "provenance", "variables": {"id": "prov1"}}'
 
+# Test 9: Provenance case insensitive
+test_request "Provenance Case Insensitive" \
+    '{"Resource": "PROVENANCE", "variables": {"ID": "prov2"}}'
+
+# Test 10: Provenance without ID (should fallback)
+test_request "Provenance Without ID (Fallback)" \
+    '{"Resource": "provenance", "variables": {"someField": "value"}}'
+
 echo ""
 echo "🧪 Running Edge Case Tests..."
 
@@ -90,7 +98,11 @@ test_request "Empty ID Variable" \
 test_request "Null ID Variable" \
     '{"Resource": "consent", "variables": {"id": null}}'
 
-# Test 11: Missing variables for DocumentReference (should fallback)
+# Test 11: Empty Provenance ID
+test_request "Empty Provenance ID" \
+    '{"Resource": "provenance", "variables": {"id": ""}}'
+
+# Test 12: Missing variables for DocumentReference (should fallback)
 test_request "Incomplete DocumentReference" \
     '{"Resource": "documentreference", "variables": {"subject": "pat1"}}'
 

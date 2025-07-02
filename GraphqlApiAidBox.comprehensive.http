@@ -1,0 +1,477 @@
+@GraphqlApiAidBox_HostAddress = http://localhost:5225
+
+###############################################################################
+# COMPREHENSIVE TESTING SUITE - PHASE 4
+# Tests all enhanced functionality including validation, error handling, and edge cases
+###############################################################################
+
+### Direct Query Mode: Basic functionality (per coding instructions)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList { id status } }",
+  "variables": {}
+}
+
+### Direct Query Mode: With variable substitution
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\") { id status } }",
+  "variables": { "id": "consent-direct-123" }
+}
+
+### Direct Query Mode: Multiple variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\", status: \"{status}\") { id status } }",
+  "variables": { 
+    "id": "consent-multi-456", 
+    "status": "active" 
+  }
+}
+
+### Case Sensitivity: Mixed case variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{ID}\") { id status } }",
+  "variables": { "id": "consent-case-789" }
+}
+
+### Case Sensitivity: Variable name mismatch (should still work)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\") { id status } }",
+  "variables": { "ID": "consent-mismatch-123" }
+}
+
+###############################################################################
+# RESOURCE-BASED QUERY TESTING
+###############################################################################
+
+### Consent Details: Standard case
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "consent-details-123" }
+}
+
+### Consent Details: Case insensitive resource
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "CONSENT",
+  "variables": { "ID": "consent-details-456" }
+}
+
+### Consent Details: Mixed case
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "Consent",
+  "variables": { "Id": "consent-details-789" }
+}
+
+### Document Reference: Standard case
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "documentreference",
+  "variables": { 
+    "subject": "patient-123",
+    "related": "consent-456"
+  }
+}
+
+### Document Reference: Case insensitive
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "DOCUMENTREFERENCE",
+  "variables": { 
+    "SUBJECT": "patient-789",
+    "RELATED": "consent-abc"
+  }
+}
+
+### Provenance History: Valid request
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "consent-history-123" }
+}
+
+### Provenance History: Case insensitive
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "PROVENANCE",
+  "variables": { "Id": "consent-history-456" }
+}
+
+### All Consents: Default fallback
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "other": "value" }
+}
+
+### All Consents: No resource specified
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "variables": { "some": "data" }
+}
+
+###############################################################################
+# ERROR CONDITION TESTING - SHOULD RETURN 400 BAD REQUEST
+###############################################################################
+
+### Error: Null body (should return 400)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+null
+
+### Error: Empty body (should return 400)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+### Error: Provenance without ID (should return 400)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "other": "value" }
+}
+
+### Error: Provenance with empty ID (should return 400)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "" }
+}
+
+### Error: Provenance with whitespace ID (should return 400)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "   " }
+}
+
+### Error: Provenance with too short ID (should return 400)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "x" }
+}
+
+### Error: Provenance with null ID (should return 400)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": null }
+}
+
+###############################################################################
+# ERROR CONDITION TESTING - SHOULD RETURN 404 NOT FOUND
+###############################################################################
+
+### Error: Invalid resource type (should return 404)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "NonexistentResource",
+  "variables": { "id": "test-123" }
+}
+
+### Error: Resource type that doesn't have a query file (should return 404)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "observation",
+  "variables": { "id": "obs-123" }
+}
+
+###############################################################################
+# EDGE CASE TESTING
+###############################################################################
+
+### Edge Case: Variables with null values
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\") { id } }",
+  "variables": { "id": null }
+}
+
+### Edge Case: Variables with undefined
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\") { id } }",
+  "variables": { "id": undefined }
+}
+
+### Edge Case: Special characters in ID
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "consent-special-@#$%^&*()" }
+}
+
+### Edge Case: Very long ID
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "consent-very-long-id-with-many-characters-that-should-still-work-properly-123456789-abcdefghijklmnopqrstuvwxyz" }
+}
+
+### Edge Case: Unicode characters in ID
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "consent-unicode-ñáéíóú-测试-🎉" }
+}
+
+### Edge Case: Numbers in variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\", count: {count}) { id } }",
+  "variables": { 
+    "id": "consent-123",
+    "count": 50
+  }
+}
+
+### Edge Case: Boolean variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\", active: {active}) { id } }",
+  "variables": { 
+    "id": "consent-bool-123",
+    "active": true
+  }
+}
+
+### Edge Case: Empty variables object
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList { id status } }",
+  "variables": {}
+}
+
+### Edge Case: No variables property
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList { id status } }"
+}
+
+###############################################################################
+# PERFORMANCE AND STRESS TESTING
+###############################################################################
+
+### Performance: Large query string
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query GetDetailedConsent { ConsentList(_id: \"{id}\") { id status category { coding { system code display } } patient { resource { ... on Patient { name { given family } birthDate id } } } dateTime performer { resource { ... on Practitioner { id name { given family } address { line city state postalCode country } identifier { system value } } } } organization { resource { ... on Organization { id name } } } policy { authority uri } provision { type actor { role { coding { system code display } } } period { start end } action { coding { system code display } } } } }",
+  "variables": { "id": "performance-test-123" }
+}
+
+### Performance: Many variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\", status: \"{status}\", category: \"{category}\", date: \"{date}\") { id } }",
+  "variables": { 
+    "id": "perf-123",
+    "status": "active",
+    "category": "treatment",
+    "date": "2024-01-01",
+    "extra1": "value1",
+    "extra2": "value2",
+    "extra3": "value3",
+    "extra4": "value4",
+    "extra5": "value5",
+    "extra6": "value6",
+    "extra7": "value7",
+    "extra8": "value8",
+    "extra9": "value9",
+    "extra10": "value10"
+  }
+}
+
+### Performance: Nested variable substitution
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query { ConsentList(_id: \"{id}\") { patient { resource { ... on Patient { id: \"{patientId}\" name { given: \"{givenName}\" family: \"{familyName}\" } } } } } }",
+  "variables": { 
+    "id": "nested-123",
+    "patientId": "patient-456",
+    "givenName": "John",
+    "familyName": "Doe"
+  }
+}
+
+###############################################################################
+# LOGGING AND MONITORING TESTS
+###############################################################################
+
+### Test: Request with tracking ID for logging
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+X-Request-ID: test-phase4-comprehensive-001
+
+{
+  "Resource": "consent",
+  "variables": { "id": "logging-test-123" }
+}
+
+### Test: Request with custom headers
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+X-User-Agent: Phase4-Testing-Suite
+X-Test-Scenario: comprehensive-validation
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "header-test-456" }
+}
+
+###############################################################################
+# REGRESSION TESTS - ENSURE OLD FUNCTIONALITY STILL WORKS
+###############################################################################
+
+### Regression: Basic consent query (Phase 1 functionality)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "regression-consent-123" }
+}
+
+### Regression: Document reference query (Phase 1 functionality)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "documentreference",
+  "variables": { 
+    "subject": "regression-patient-123",
+    "related": "regression-consent-456"
+  }
+}
+
+### Regression: Provenance query (Phase 2 functionality)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "regression-history-789" }
+}
+
+### Regression: Case insensitive handling (Phase 3 functionality)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "CONSENT",
+  "variables": { "ID": "regression-case-abc" }
+}
