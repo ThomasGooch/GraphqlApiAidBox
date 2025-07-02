@@ -36,33 +36,43 @@ namespace GraphqlApiAidBox.Controllers
             if (body != null && body.TryGetPropertyValue("variables", out var variablesNode) && variablesNode is JsonObject vObj)
                 variables = vObj;
 
-            // Determine query name
-            string queryName = "GetAllConsentsQuery";
-            if (variables.Count > 0 && body != null && body.TryGetPropertyValue("Resource", out var resourceNode) && resourceNode is not null)
+            // Check if query is provided directly in the body
+            if (body != null && body.TryGetPropertyValue("query", out var queryNode) && !string.IsNullOrWhiteSpace(queryNode?.ToString()))
             {
-                var resource = resourceNode.ToString().ToLowerInvariant();
-                if (resource == "consent" && variables.ContainsKey("id"))
-                    queryName = "GetConsentDetailsQuery";
-                else if (resource == "documentreference" && variables.ContainsKey("subject") && variables.ContainsKey("related"))
-                    queryName = "GetDocumentReferenceUrlQuery";
-                else if (resource == "provenance" && variables.ContainsKey("id"))
-                    queryName = "GetConsentHistoryQuery";
+                queryText = queryNode.ToString();
             }
+            else
+            {
+                // Determine query name based on Resource and variables
+                string queryName = "GetAllConsentsQuery";
+                if (body != null && body.TryGetPropertyValue("Resource", out var resourceNode) && resourceNode is not null)
+                {
+                    var resource = resourceNode.ToString().ToLowerInvariant();
+                    if (resource == "consent" && HasVariable(variables, "id"))
+                        queryName = "GetConsentDetailsQuery";
+                    else if (resource == "documentreference" && HasVariable(variables, "subject") && HasVariable(variables, "related"))
+                        queryName = "GetDocumentReferenceUrlQuery";
+                    else if (resource == "provenance" && HasVariable(variables, "id"))
+                        queryName = "GetConsentHistoryQuery";
+                }
 
-            queryFilePath = Directory.GetFiles(_queriesPath, "*.graphql")
-                .FirstOrDefault(f => Path.GetFileNameWithoutExtension(f).Equals(queryName, StringComparison.OrdinalIgnoreCase));
-            if (string.IsNullOrEmpty(queryFilePath))
-                return NotFound($"Query file '{queryName}.graphql' not found.");
+                queryFilePath = Directory.GetFiles(_queriesPath, "*.graphql")
+                    .FirstOrDefault(f => Path.GetFileNameWithoutExtension(f).Equals(queryName, StringComparison.OrdinalIgnoreCase));
+                if (string.IsNullOrEmpty(queryFilePath))
+                    return NotFound($"Query file '{queryName}.graphql' not found.");
 
-            queryText = (await System.IO.File.ReadAllTextAsync(queryFilePath)).Trim();
+                queryText = (await System.IO.File.ReadAllTextAsync(queryFilePath)).Trim();
+            }
 
             // Interpolate variables into query text if placeholders exist (e.g., {id}, {subject}, {related}, etc.)
             if (!string.IsNullOrEmpty(queryText))
             {
                 foreach (var kvp in variables)
                 {
+                    // Make placeholder matching case-insensitive
                     var pattern = "{" + kvp.Key + "}";
-                    queryText = queryText.Replace(pattern, kvp.Value?.ToString() ?? "");
+                    var regex = new Regex(Regex.Escape(pattern), RegexOptions.IgnoreCase);
+                    queryText = regex.Replace(queryText, kvp.Value?.ToString() ?? "");
                 }
             }
 
@@ -71,6 +81,13 @@ namespace GraphqlApiAidBox.Controllers
             var response = await client.PostAsJsonAsync(_aidboxGraphqlUrl, payload);
             var responseContent = await response.Content.ReadAsStringAsync();
             return Content(responseContent, "application/json");
+        }
+
+        private static bool HasVariable(JsonObject variables, string key)
+        {
+            return variables.Any(kvp => string.Equals(kvp.Key, key, StringComparison.OrdinalIgnoreCase) && 
+                                       kvp.Value != null && 
+                                       !string.IsNullOrWhiteSpace(kvp.Value.ToString()));
         }
     }
 }
