@@ -1,4 +1,4 @@
-query {
+query GetConsentHistory {
   ProvenanceList(target: "{id}") {
     id
     recorded

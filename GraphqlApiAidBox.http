@@ -1,4 +1,3 @@
-
 @GraphqlApiAidBox_HostAddress = http://localhost:5225
 
 ###############################################################################
@@ -202,5 +201,99 @@ Accept: application/json
 
 {
   "Resource": "consent",
+  "variables": { "id": "550e8400-e29b-41d4-a716-446655440000" }
+}
+
+###############################################################################
+# PROVENANCE/HISTORY QUERY TESTS
+###############################################################################
+
+### Provenance History Query: Standard case
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "consent-123" }
+}
+
+### Provenance History Query: Case insensitive resource name
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "PROVENANCE",
+  "variables": { "id": "consent-456" }
+}
+
+### Provenance History Query: Case insensitive variable name
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "ID": "consent-789" }
+}
+
+### Provenance History Query: Enhanced comprehensive query
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "comprehensive-consent-123" }
+}
+
+### Provenance History Query: Direct enhanced query mode
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query GetConsentHistory { ProvenanceList(target: \"{id}\") { id recorded agent { who { resource { ... on Practitioner { name { given family } } } } } entity { what { resource { ... on Consent { status } } } } } }",
+  "variables": { "id": "direct-enhanced-123" }
+}
+
+### Provenance Query: Without ID (should fallback to all consents)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "someOtherField": "value" }
+}
+
+### Provenance History Query: Empty ID
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": "" }
+}
+
+### Provenance History Query: Null ID
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
+  "variables": { "id": null }
+}
+
+### Provenance History Query: UUID format ID
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "provenance",
   "variables": { "id": "550e8400-e29b-41d4-a716-446655440000" }
 }
