@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace GraphqlApiAidBox.Controllers
 {
@@ -14,67 +15,45 @@ namespace GraphqlApiAidBox.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _aidboxGraphqlUrl;
-
         private readonly string _queriesPath;
+        private readonly ILogger<PassthroughController> _logger;
 
-        public PassthroughController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public PassthroughController(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<PassthroughController> logger)
         {
             _httpClientFactory = httpClientFactory;
             _aidboxGraphqlUrl = configuration["AidboxGraphqlUrl"] ?? "";
+            _aidboxGraphqlUrl = configuration["AidboxGraphqlUrl"] ?? "";
             _queriesPath = configuration["QueriesPath"] ?? Path.Combine(AppContext.BaseDirectory, "Graphql", "Queries");
+            _logger = logger;
         }
 
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] JsonObject? body)
         {
-            string? queryFilePath = null;
-            string? queryText = null;
-            JsonObject variables = new JsonObject();
-
-            // Extract variables if present
-            if (body != null && body.TryGetPropertyValue("variables", out var variablesNode) && variablesNode is JsonObject vObj)
-                variables = vObj;
-
-            // Check if query is provided directly in the body
-            if (body != null && body.TryGetPropertyValue("query", out var queryNode) && !string.IsNullOrWhiteSpace(queryNode?.ToString()))
+            try
             {
-                queryText = queryNode.ToString();
-            }
-            else
-            {
-                // Determine query name based on Resource and variables
-                string queryName = "GetAllConsentsQuery";
-                if (body != null && body.TryGetPropertyValue("Resource", out var resourceNode) && resourceNode is not null)
+                _logger.LogInformation("Processing GraphQL passthrough request");
+                
+                if (body == null)
                 {
-                    var resource = resourceNode.ToString().ToLowerInvariant();
-                    if (resource == "consent" && HasVariable(variables, "id"))
-                        queryName = "GetConsentDetailsQuery";
-                    else if (resource == "documentreference" && HasVariable(variables, "subject") && HasVariable(variables, "related"))
-                        queryName = "GetDocumentReferenceUrlQuery";
-                    else if (resource == "provenance" && HasVariable(variables, "id"))
-                        queryName = "GetConsentHistoryQuery";
+                    _logger.LogWarning("Request body is null");
+                    return BadRequest(new { error = "Request body is required" });
                 }
 
-                queryFilePath = Directory.GetFiles(_queriesPath, "*.graphql")
-                    .FirstOrDefault(f => Path.GetFileNameWithoutExtension(f).Equals(queryName, StringComparison.OrdinalIgnoreCase));
-                if (string.IsNullOrEmpty(queryFilePath))
-                    return NotFound($"Query file '{queryName}.graphql' not found.");
+                string? queryFilePath = null;
+                string? queryText = null;
+                JsonObject variables = new JsonObject();
 
-                queryText = (await System.IO.File.ReadAllTextAsync(queryFilePath)).Trim();
-            }
+                // Extract variables if present
+                if (body.TryGetPropertyValue("variables", out var variablesNode) && variablesNode is JsonObject vObj)
+                    variables = vObj;
 
-            // Interpolate variables into query text if placeholders exist (e.g., {id}, {subject}, {related}, etc.)
-            if (!string.IsNullOrEmpty(queryText))
-            {
-                foreach (var kvp in variables)
+                // Extract id if present as direct property
+                if (body.TryGetPropertyValue("id", out var idNode) && !string.IsNullOrWhiteSpace(idNode?.ToString()))
                 {
-                    // Make placeholder matching case-insensitive
-                    var pattern = "{" + kvp.Key + "}";
-                    var regex = new Regex(Regex.Escape(pattern), RegexOptions.IgnoreCase);
-                    queryText = regex.Replace(queryText, kvp.Value?.ToString() ?? "");
+                    variables["id"] = JsonValue.Create(idNode.ToString());
                 }
-            }
 
             // If AidboxGraphqlUrl is not configured (for testing), return mock response
             if (string.IsNullOrEmpty(_aidboxGraphqlUrl))

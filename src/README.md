@@ -52,7 +52,7 @@ POST `/passthrough`
 **Automatic Query Selection Rules:**
 - `Resource: "consent"` + `id` → `GetConsentDetailsQuery.graphql`
 - `Resource: "documentreference"` + `subject` + `related` → `GetDocumentReferenceUrlQuery.graphql`
-- `Resource: "provenance"` + `id` → `GetConsentHistoryQuery.graphql`
+- `Resource: "provenance"` + `id` → `GetConsentHistoryQuery.graphql` (comprehensive history)
 - Any other case → `GetAllConsentsQuery.graphql` (default)
 
 ### Variable Substitution
@@ -109,7 +109,14 @@ test-api.sh                        # Automated test script
 1. **Get consent details**: `Resource: "consent"` with `id`
 2. **Get all consents**: No Resource or variables
 3. **Get document references**: `Resource: "documentreference"` with `subject` and `related`
-4. **Get consent history**: `Resource: "provenance"` with `id`
+4. **Get comprehensive consent history**: `Resource: "provenance"` with `id` - includes:
+   - Core provenance information (ID, timestamps, metadata)
+   - Activity details (what actions were performed)
+   - Agent information (who made changes - practitioners, organizations, patients)
+   - Entity details (what consent resources were affected)
+   - Reason codes (why changes were made)
+   - Digital signatures and attestation
+   - Location information (where changes occurred)
 5. **Custom queries**: Direct GraphQL with any variables
 
 See the HTTP files for ready-to-use request examples covering all scenarios.
