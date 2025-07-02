@@ -1,0 +1,116 @@
+@GraphqlApiAidBox_HostAddress = http://localhost:5225
+@AidboxGraphqlUrl = http://localhost:8080/graphql
+
+###############################################################################
+# DEVELOPMENT & DEBUGGING REQUESTS
+###############################################################################
+
+### Health Check: Verify API is running
+GET {{GraphqlApiAidBox_HostAddress}}/
+
+### Development: Test with real Aidbox data (replace with actual IDs)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "real-consent-id-from-aidbox" }
+}
+
+### Development: Inspect outgoing request (use network tab to see what's sent to Aidbox)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query Debug { ConsentList(_id: \"{id}\") { id status dateTime patient { resource { ... on Patient { id name { given family } } } } } }",
+  "variables": { "id": "debug-consent-123" }
+}
+
+###############################################################################
+# PERFORMANCE & LOAD TESTING
+###############################################################################
+
+### Performance: Large ID
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { 
+    "id": "very-long-consent-id-that-might-be-used-in-some-systems-with-verbose-naming-conventions-123456789"
+  }
+}
+
+### Performance: Multiple variable substitutions
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query MultiVar { ConsentList(_id: \"{id}\") { id status patient { resource { ... on Patient { id name { given: \"{given}\" family: \"{family}\" } } } } } }",
+  "variables": { 
+    "id": "perf-test-123",
+    "given": "John",
+    "family": "Doe"
+  }
+}
+
+###############################################################################
+# ERROR SIMULATION & EDGE CASES
+###############################################################################
+
+### Error Simulation: Malformed JSON
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "malformed
+}
+
+### Error Simulation: Invalid Resource type
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": 123,
+  "variables": { "id": "numeric-resource-type" }
+}
+
+### Error Simulation: Very large payload
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { 
+    "id": "large-payload-test",
+    "largeField": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+  }
+}
+
+###############################################################################
+# CONFIGURATION TESTING
+###############################################################################
+
+### Config Test: Test different host configurations
+# @GraphqlApiAidBox_HostAddress = http://localhost:5226
+# @GraphqlApiAidBox_HostAddress = https://your-staging-api.com
+# @GraphqlApiAidBox_HostAddress = https://your-production-api.com
+
+### Config Test: Test with authentication headers (when implemented)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+# Authorization: Bearer your-token-here
+
+{
+  "Resource": "consent",
+  "variables": { "id": "auth-test-123" }
+}

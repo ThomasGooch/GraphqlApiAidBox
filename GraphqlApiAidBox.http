@@ -1,7 +1,11 @@
 
 @GraphqlApiAidBox_HostAddress = http://localhost:5225
 
-### Smoke test: Missing query file (should return 404)
+###############################################################################
+# ERROR HANDLING TESTS
+###############################################################################
+
+### Error Test: Missing query file (should return 404)
 POST {{GraphqlApiAidBox_HostAddress}}/passthrough
 Content-Type: application/json
 Accept: application/json
@@ -11,41 +15,192 @@ Accept: application/json
   "variables": { "id": "123" }
 }
 
-### Smoke test: Consent with id
+###############################################################################
+# RESOURCE-BASED QUERY SELECTION TESTS
+###############################################################################
+
+### Consent Details Query: Standard case
 POST {{GraphqlApiAidBox_HostAddress}}/passthrough
 Content-Type: application/json
 Accept: application/json
 
 {
   "Resource": "consent",
-  "variables": { "id": "abc" }
+  "variables": { "id": "consent-123" }
 }
 
-### Smoke test: DocumentReference with subject and related
+### Consent Details Query: Case insensitive resource name
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "CONSENT",
+  "variables": { "id": "consent-456" }
+}
+
+### Consent Details Query: Case insensitive variable name
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "ID": "consent-789" }
+}
+
+### DocumentReference Query: Standard case
 POST {{GraphqlApiAidBox_HostAddress}}/passthrough
 Content-Type: application/json
 Accept: application/json
 
 {
   "Resource": "documentreference",
-  "variables": { "subject": "pat1", "related": "cons1" }
+  "variables": { 
+    "subject": "Patient/patient-123", 
+    "related": "Consent/consent-456" 
+  }
 }
 
-### Smoke test: Provenance with id
+### Provenance History Query: Standard case
 POST {{GraphqlApiAidBox_HostAddress}}/passthrough
 Content-Type: application/json
 Accept: application/json
 
 {
   "Resource": "provenance",
-  "variables": { "id": "prov1" }
+  "variables": { "id": "provenance-123" }
 }
 
-### Smoke test: All consents (no variables)
+### All Consents Query: No variables (fallback to default)
 POST {{GraphqlApiAidBox_HostAddress}}/passthrough
 Content-Type: application/json
 Accept: application/json
 
 {
   "variables": {}
+}
+
+### All Consents Query: No Resource specified
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "variables": { "someOtherVar": "value" }
+}
+
+###############################################################################
+# DIRECT QUERY TESTS (Following API spec: query + variables)
+###############################################################################
+
+### Direct Query: Simple consent query
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query GetConsentDetails { ConsentList(_id: \"{id}\") { id status } }",
+  "variables": { "id": "direct-consent-123" }
+}
+
+### Direct Query: Complex query with multiple variables
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query GetDocuments($subject: String!, $related: String!) { DocumentReferenceList(subject: \"{subject}\", related: \"{related}\") { id content { attachment { url } } } }",
+  "variables": { 
+    "subject": "Patient/direct-patient-456",
+    "related": "Consent/direct-consent-789"
+  }
+}
+
+### Direct Query: No variable substitution needed
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "query": "query GetAllConsents { ConsentList { id status dateTime } }",
+  "variables": {}
+}
+
+###############################################################################
+# EDGE CASES AND VALIDATION TESTS
+###############################################################################
+
+### Edge Case: Empty ID variable
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "" }
+}
+
+### Edge Case: Null ID variable
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": null }
+}
+
+### Edge Case: Missing required variables for DocumentReference
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "documentreference",
+  "variables": { "subject": "Patient/test" }
+}
+
+### Edge Case: Consent resource without ID (should fallback to all consents)
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "someOtherField": "value" }
+}
+
+###############################################################################
+# MIXED CASE AND SPECIAL CHARACTER TESTS
+###############################################################################
+
+### Mixed Case Test: Resource and variable names
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "ConSenT",
+  "variables": { "Id": "mixed-case-test-123" }
+}
+
+### Special Characters Test: ID with special characters
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "consent-with-special-chars_123-456.789" }
+}
+
+### UUID Test: ID as UUID format
+POST {{GraphqlApiAidBox_HostAddress}}/passthrough
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Resource": "consent",
+  "variables": { "id": "550e8400-e29b-41d4-a716-446655440000" }
 }
