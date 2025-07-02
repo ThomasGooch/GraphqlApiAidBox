@@ -74,7 +74,7 @@ namespace GraphqlApiAidBox.Controllers
                 }
                 else
                 {
-                    // Determine query name based on resource and id
+                    // Determine query name based on resource and variables
                     string queryName = "GetAllConsentsQuery";
                     
                     // Check both "Resource" and "resource" (case insensitive)
@@ -160,13 +160,9 @@ namespace GraphqlApiAidBox.Controllers
                     _logger.LogInformation("No external GraphQL URL configured, returning mock response");
                     var mockResponse = new
                     {
-                        data = new
-                        {
-                            query = queryText,
-                            variables = variables,
-                            processed = true,
-                            timestamp = DateTime.UtcNow.ToString("O")
-                        }
+                        data = new { message = "Mock response: Query processed successfully" },
+                        processedQuery = queryText,
+                        processedVariables = variables
                     };
                     return Ok(mockResponse);
                 }
