@@ -16,7 +16,8 @@ namespace GraphqlApiAidBox.Tests
         {
             var httpClientFactory = Substitute.For<IHttpClientFactory>();
             httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(new FakeHttpMessageHandler()));
-            var controller = new PassthroughController(httpClientFactory, Substitute.For<Microsoft.Extensions.Configuration.IConfiguration>());
+            var logger = Substitute.For<Microsoft.Extensions.Logging.ILogger<PassthroughController>>();
+            var controller = new PassthroughController(httpClientFactory, Substitute.For<Microsoft.Extensions.Configuration.IConfiguration>(), logger);
             
             // Set private fields using reflection
             typeof(PassthroughController)
@@ -97,11 +98,10 @@ namespace GraphqlApiAidBox.Tests
         }
 
         [Fact]
-        public async Task DocumentReference_MissingSubject_FallsBackToDefault()
+        public async Task DocumentReference_MissingSubject_ReturnsNotSupported()
         {
             // Arrange
-            var fileContent = "query GetAllConsents { ConsentList { id } }";
-            var tempQueriesPath = TestHelpers.CreateTempQueriesDirWithFile("GetAllConsentsQuery.graphql", fileContent);
+            var tempQueriesPath = TestHelpers.CreateTempQueriesDirWithFile("dummy.graphql", "query { test }");
             var controller = CreateController(tempQueriesPath);
             
             var body = new JsonObject
@@ -117,21 +117,20 @@ namespace GraphqlApiAidBox.Tests
             var result = await controller.Post(body);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var response = okResult.Value;
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            var response = notFoundResult.Value;
             Assert.NotNull(response);
             
-            // Should fall back to default query (GetAllConsents) when required parameters are missing
+            // Should return "not supported" error when required parameters are missing
             var responseJson = System.Text.Json.JsonSerializer.Serialize(response);
-            Assert.Contains("GetAllConsents", responseJson);
+            Assert.Contains("not supported", responseJson);
         }
 
         [Fact]
-        public async Task DocumentReference_MissingRelated_FallsBackToDefault()
+        public async Task DocumentReference_MissingRelated_ReturnsNotSupported()
         {
             // Arrange
-            var fileContent = "query GetAllConsents { ConsentList { id } }";
-            var tempQueriesPath = TestHelpers.CreateTempQueriesDirWithFile("GetAllConsentsQuery.graphql", fileContent);
+            var tempQueriesPath = TestHelpers.CreateTempQueriesDirWithFile("dummy.graphql", "query { test }");
             var controller = CreateController(tempQueriesPath);
             
             var body = new JsonObject
@@ -147,21 +146,20 @@ namespace GraphqlApiAidBox.Tests
             var result = await controller.Post(body);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var response = okResult.Value;
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            var response = notFoundResult.Value;
             Assert.NotNull(response);
             
-            // Should fall back to default query when required parameters are missing
+            // Should return "not supported" error when required parameters are missing
             var responseJson = System.Text.Json.JsonSerializer.Serialize(response);
-            Assert.Contains("GetAllConsents", responseJson);
+            Assert.Contains("not supported", responseJson);
         }
 
         [Fact]
-        public async Task DocumentReference_EmptyVariables_FallsBackToDefault()
+        public async Task DocumentReference_EmptyVariables_ReturnsNotSupported()
         {
             // Arrange
-            var fileContent = "query GetAllConsents { ConsentList { id } }";
-            var tempQueriesPath = TestHelpers.CreateTempQueriesDirWithFile("GetAllConsentsQuery.graphql", fileContent);
+            var tempQueriesPath = TestHelpers.CreateTempQueriesDirWithFile("dummy.graphql", "query { test }");
             var controller = CreateController(tempQueriesPath);
             
             var body = new JsonObject
@@ -174,13 +172,13 @@ namespace GraphqlApiAidBox.Tests
             var result = await controller.Post(body);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var response = okResult.Value;
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            var response = notFoundResult.Value;
             Assert.NotNull(response);
             
-            // Should fall back to default query when no variables provided
+            // Should return "not supported" error when no variables provided
             var responseJson = System.Text.Json.JsonSerializer.Serialize(response);
-            Assert.Contains("GetAllConsents", responseJson);
+            Assert.Contains("not supported", responseJson);
         }
 
         [Fact]
