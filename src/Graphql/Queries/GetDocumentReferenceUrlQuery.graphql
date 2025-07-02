@@ -1,4 +1,4 @@
-query GetDocumentReferenceUrl($subject: string, $related: string) {
+query GetDocumentReferenceUrl {
   DocumentReferenceList(subject: "{subject}", related: "{related}") {
     content {
       attachment {
