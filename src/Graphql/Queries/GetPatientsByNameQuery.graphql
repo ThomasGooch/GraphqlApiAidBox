@@ -1,0 +1,25 @@
+query GetPatientsByName {
+  PatientList(given: "{given}", family: "{family}") {
+    id
+    name {
+      given
+      family
+    }
+    birthDate
+    gender
+    telecom {
+      system
+      value
+    }
+    address {
+      line
+      city
+      state
+      postalCode
+      country
+    }
+    meta {
+      lastUpdated
+    }
+  }
+}

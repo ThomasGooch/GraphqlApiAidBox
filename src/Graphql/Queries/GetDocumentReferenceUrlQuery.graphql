@@ -6,4 +6,5 @@ query GetDocumentReferenceUrl {
       }
     }
   }
-}
+}dotnet build
+dotnet test

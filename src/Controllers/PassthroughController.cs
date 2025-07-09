@@ -66,6 +66,22 @@ namespace GraphqlApiAidBox.Controllers
                     variables["related"] = JsonValue.Create(relatedNode.ToString());
                 }
 
+                // Extract given if present as direct property (for patient search) - case insensitive
+                var givenProperty = body.FirstOrDefault(kvp => 
+                    string.Equals(kvp.Key, "given", StringComparison.OrdinalIgnoreCase));
+                if (givenProperty.Value is not null && !string.IsNullOrWhiteSpace(givenProperty.Value.ToString()))
+                {
+                    variables[givenProperty.Key] = JsonValue.Create(givenProperty.Value.ToString());
+                }
+
+                // Extract family if present as direct property (for patient search) - case insensitive
+                var familyProperty = body.FirstOrDefault(kvp => 
+                    string.Equals(kvp.Key, "family", StringComparison.OrdinalIgnoreCase));
+                if (familyProperty.Value is not null && !string.IsNullOrWhiteSpace(familyProperty.Value.ToString()))
+                {
+                    variables[familyProperty.Key] = JsonValue.Create(familyProperty.Value.ToString());
+                }
+
                 // Check if query is provided directly in the body
                 if (body.TryGetPropertyValue("query", out var queryNode) && !string.IsNullOrWhiteSpace(queryNode?.ToString()))
                 {
@@ -95,6 +111,21 @@ namespace GraphqlApiAidBox.Controllers
                         {
                             queryName = "GetDocumentReferenceUrlQuery";
                             _logger.LogInformation("Using document reference query");
+                        }
+                        else if (resource == "patient")
+                        {
+                            if (!IsValidPatientSearchRequest(variables))
+                            {
+                                _logger.LogWarning("Invalid patient search request: at least one of given or family name is required");
+                                return BadRequest(new { 
+                                    error = "Invalid patient search request", 
+                                    message = "At least one of 'given' or 'family' name parameter is required for patient search" 
+                                });
+                            }
+                            
+                            queryName = "GetPatientsByNameQuery";
+                            _logger.LogInformation("Using patient search query with given: {Given}, family: {Family}", 
+                                GetVariableValue(variables, "given"), GetVariableValue(variables, "family"));
                         }
                         else if (resource == "provenance")
                         {
@@ -204,6 +235,34 @@ namespace GraphqlApiAidBox.Controllers
             var idValue = GetVariableValue(variables, "id");
             if (string.IsNullOrWhiteSpace(idValue) || idValue.Length < 2)
                 return false;
+            
+            return true;
+        }
+
+        private static bool IsValidPatientSearchRequest(JsonObject variables)
+        {
+            // At least one of given or family name must be provided and meaningful
+            var hasGiven = HasVariable(variables, "given");
+            var hasFamily = HasVariable(variables, "family");
+            
+            if (!hasGiven && !hasFamily)
+                return false;
+            
+            // If given is provided, it should be meaningful
+            if (hasGiven)
+            {
+                var givenValue = GetVariableValue(variables, "given");
+                if (string.IsNullOrWhiteSpace(givenValue) || givenValue.Length < 1)
+                    return false;
+            }
+            
+            // If family is provided, it should be meaningful
+            if (hasFamily)
+            {
+                var familyValue = GetVariableValue(variables, "family");
+                if (string.IsNullOrWhiteSpace(familyValue) || familyValue.Length < 1)
+                    return false;
+            }
             
             return true;
         }
